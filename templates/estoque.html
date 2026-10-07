@@ -1,69 +1,49 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estoque - Sistema de Estoque</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estoque - Almoxarifado</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estoque.css') }}">
 </head>
-
 <body>
 
-    <header>
-        <h1>Sistema de Estoque</h1>
+  <header>
+    <h2>Sistema de Almoxarifado</h2>
+    <a href="/login">Sair</a>
+  </header>
 
-        <nav aria-label="Navegação principal">
-            <ul>
-                <li>
-                    <a href="home.html">Início</a>
-                </li>
+  <nav>
+    <ul>
+      <li><a href="/home">Início</a></li>
+      <li><a href="/movimentacoes">Movimentações</a></li>
+      <li><a href="/estoque">Estoque</a></li>
+      <li><a href="/add-usuario">Cadastrar Usuário</a></li>
+    </ul>
+  </nav>
 
-                <li>
-                    <a href="movimentacoes.html">Movimentações</a>
-                </li>
+  <main>
+    <section>
+      <h1>Itens no Estoque</h1>
 
-                <li>
-                    <a href="estoque.html">Estoque</a>
-                </li>
-
-                <li id="menu-admin">
-                    <a href="add-usuario.html">Adicionar usuário</a>
-                </li>
-
-                <li>
-                    <a href="login.html">Sair</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-
-        <section aria-labelledby="titulo-estoque">
-            <h2 id="titulo-estoque">Estoque</h2>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Produto</th>
-                        <th>Quantidade</th>
-                        <th>Estoque mínimo</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <!-- Os produtos serão carregados pelo backend -->
-                </tbody>
-            </table>
-
-        </section>
-
-    </main>
-
-    <footer>
-        <p>Sistema de Estoque</p>
-    </footer>
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Item</th>
+            <th>Quantidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>001</td>
+            <td>Item Exemplo</td>
+            <td>100</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
 
 </body>
 </html>
