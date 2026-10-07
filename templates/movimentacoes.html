@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentações - Sistema de Estoque</title>
+</head>
+
+<body>
+    <header>
+        <h1>Sistema de Estoque</h1>
+
+        <nav aria-label="Navegação principal">
+            <ul>
+                <li>  <a href="home.html">Início</a> </li>
+
+                <li>
+                    <a href="movimentacoes.html">Movimentações</a>
+                </li>
+
+                <li>
+                    <a href="estoque.html">Estoque</a>
+                </li>
+
+                <li id="menu-admin">
+                    <a href="add-usuario.html">Adicionar usuário</a>
+                </li>
+
+                <li>
+                    <a href="login.html">Sair</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+
+        <section aria-labelledby="titulo-movimentacoes">
+            <h2 id="titulo-movimentacoes">Movimentações</h2>
+
+            <form action="/movimentacoes" method="POST">
+
+                <div>
+                    <label for="produto">Produto:</label>
+
+                    <select id="produto" name="produto" required>
+                        <option value="">Selecione</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="tipo">Tipo:</label>
+
+                    <select id="tipo" name="tipo" required>
+                        <option value="">Selecione</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="quantidade">Quantidade:</label>
+
+                    <input
+                        type="number"
+                        id="quantidade"
+                        name="quantidade"
+                        min="1"
+                        required
+                    >
+                </div>
+
+                <button type="submit">
+                    Registrar movimentação
+                </button>
+
+            </form>
+        </section>
+
+        <section aria-labelledby="historico">
+            <h2 id="historico">Histórico de movimentações</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Tipo</th>
+                        <th>Quantidade</th>
+                        <th>Data</th>
+                        <th>Usuário</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- Os dados serão carregados pelo backend -->
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Sistema de Estoque</p>
+    </footer>
+
+</body>
+</html>

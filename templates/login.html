@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Estoque</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>Sistema de Estoque</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Login</h2>
+
+            <form id="loginForm">
+
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" required>
+
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" required>
+
+                <button type="submit">Entrar</button>
+
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>Sistema de Estoque</p>
+    </footer>
+
+   <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+</body>
+</html>
