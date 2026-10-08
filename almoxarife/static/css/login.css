@@ -1,0 +1,56 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #003366; 
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  height: 50vh;
+  margin: 25vh;
+}
+
+.lado-imagem img {
+  max-width: 400px;
+  width: 100%;
+  height: auto;
+  margin-left: 50px; 
+}
+
+main {
+  background: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  width: 300px;
+}
+
+h1 {
+  color: #003366;
+  font-size: 20px;
+  text-align: left;
+}
+
+div {
+  margin-bottom: 12px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #f26522; 
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}

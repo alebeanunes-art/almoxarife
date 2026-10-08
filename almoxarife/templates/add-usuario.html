@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Usuário - Almoxarifado</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/add-usuario.css') }}">
+</head>
+<body>
+
+  <header>
+    <h2>Sistema de Almoxarifado</h2>
+    <a href="/login">Sair</a>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="/home">Início</a></li>
+      <li><a href="/movimentacoes">Movimentações</a></li>
+      <li><a href="/estoque">Estoque</a></li>
+      <li><a href="/add-usuario">Cadastrar Usuário</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section>
+      <h1>Cadastrar Novo Usuário</h1>
+
+      <form action="/add-usuario" method="POST">
+        <div>
+          <label for="username">Nome de Usuário</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+
+        <div>
+          <label for="password">Senha</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+
+        <div>
+          <label for="role">Tipo de Usuário</label>
+          <select id="role" name="role" required>
+            <option value="usuario">Usuário</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+
+        <button type="submit">Cadastrar</button>
+      </form>
+    </section>
+  </main>
+
+</body>
+</html>
