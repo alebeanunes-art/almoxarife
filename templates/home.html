@@ -3,55 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Início - Almoxarifado</title>
+  <title>Almoxarifado SENAI - Home</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
 <body>
 
-  <header>
-    <h2>Sistema de Almoxarifado</h2>
-    <a href="{{ url_for('login_page') }}">Sair</a>
-  </header>
+  <!-- BARRA SUPERIOR (TOPBAR) -->
+ <header class="topbar">
+  <div class="topbar-logo">
+    <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI">
+  </div>
+  <div class="topbar-titulo">
+    <h2>Sistema de Gestão de Almoxarifado</h2>
+  </div>
+  <a href="/login" class="btn-logout-top">SAIR</a>
+</header>
 
-  <nav>
-    <ul>
-      <li><a href="{{ url_for('home_page') }}">Início</a></li>
-      <li><a href="{{ url_for('movimentacoes_page') }}">Movimentações</a></li>
-      <li><a href="{{ url_for('estoque_page') }}">Estoque</a></li>
-      <li><a href="{{ url_for('add_usuario_page') }}">Cadastrar Usuário</a></li>
-    </ul>
-  </nav>
+  <!-- CONTAINER PRINCIPAL -->
+  <div class="main-container">
 
-  <main>
-    <section>
-      <h1>Visão Geral do Estoque</h1>
-      <p><strong>Total de itens acumulados:</strong> {{ total_itens }}</p>
+    <!-- NAVBAR LATERAL -->
+    <aside class="sidebar">
+      <nav>
+        <a href="/home" class="nav-btn active">Home</a>
+        <a href="/movimentacoes" class="nav-btn">Movimentações</a>
+        <a href="/estoque" class="nav-btn">Estoque</a>
+        <a href="/relatorios" class="nav-btn">Relatórios</a>
+      </nav>
+    </aside>
 
-      <h2>Produtos Em Estoque</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome do Produto</th>
-            <th>Quantidade Atual</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for produto in produtos %}
-          <tr>
-            <td>{{ produto.id }}</td>
-            <td>{{ produto.nome }}</td>
-            <td>{{ produto.quantidade }}</td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="3">Nenhum produto cadastrado no banco de dados.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </section>
-  </main>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="content">
+      <h1>Painel Geral de Estoque</h1>
+
+      <!-- CARD COM A TABELA DE PRODUTOS -->
+      <section class="card-tabela">
+        <h3>Produtos em Estoque</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Quantidade</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+           
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+  </div>
 
 </body>
 </html>

@@ -3,52 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movimentações - Almoxarifado</title>
+  <title>Almoxarifado SENAI - Movimentações</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/movimentacoes.css') }}">
 </head>
 <body>
 
-  <header>
-    <h2>Sistema de Almoxarifado</h2>
-    <a href="/login">Sair</a>
+  <!-- BARRA SUPERIOR (TOPBAR) -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <img src="{{ url_for('static', filename='fotos/logo.png') }}" alt="Logo SENAI">
+    </div>
+    <div class="topbar-titulo">
+      <h2>Sistema de Gestão de Almoxarifado</h2>
+    </div>
   </header>
 
-  <nav>
-    <ul>
-      <li><a href="/home">Início</a></li>
-      <li><a href="/movimentacoes">Movimentações</a></li>
-      <li><a href="/estoque">Estoque</a></li>
-      <li><a href="/add-usuario">Cadastrar Usuário</a></li>
-    </ul>
-  </nav>
+  <!-- CONTAINER PRINCIPAL -->
+  <div class="main-container">
 
-  <main>
-    <section>
-      <h1>Registrar Movimentação</h1>
+    <!-- NAVBAR LATERAL -->
+    <aside class="sidebar">
+      <nav>
+        <a href="/home" class="nav-btn">Home</a>
+        <a href="/movimentacoes" class="nav-btn active">Movimentações</a>
+        <a href="/estoque" class="nav-btn">Estoque</a>
+        <a href="/relatorios" class="nav-btn">Relatórios</a>
+        <a href="/login" class="nav-btn logout">Sair</a>
+      </nav>
+    </aside>
 
-      <form action="/movimentacoes" method="POST">
-        <div>
-          <label for="tipo">Tipo de Movimentação</label>
-          <select id="tipo" name="tipo" required>
-            <option value="entrada">Entrada</option>
-            <option value="saida">Saída</option>
-          </select>
-        </div>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="content">
+      <h1>Movimentações do Estoque</h1>
 
-        <div>
-          <label for="produto">Produto</label>
-          <input type="text" id="produto" name="produto" required>
-        </div>
+      <!-- FORMULÁRIO DE REGISTRO -->
+      <section class="card-form">
+        <h3>Nova Movimentação</h3>
+        <form action="/api/movimentacoes" method="POST">
+          <div class="form-group">
+            <label>Item</label>
+            <input type="text" name="item" required placeholder="Nome do material">
+          </div>
 
-        <div>
-          <label for="quantidade">Quantidade</label>
-          <input type="number" id="quantidade" name="quantidade" min="1" required>
-        </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select name="tipo" required>
+              <option value="Entrada">Entrada</option>
+              <option value="Saída">Saída</option>
+            </select>
+          </div>
 
-        <button type="submit">Salvar Movimentação</button>
-      </form>
-    </section>
-  </main>
+          <div class="form-group">
+            <label>Quantidade</label>
+            <input type="number" name="quantidade" min="1" required placeholder="0">
+          </div>
+
+          <button type="submit" class="btn-salvar">Registrar</button>
+        </form>
+      </section>
+
+      <!-- TABELA DE HISTÓRICO -->
+      <section class="card-tabela">
+        <h3>Histórico Recente</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Item</th>
+              <th>Tipo</th>
+              <th>Qtd</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>09/10/2026</td>
+              <td>Chave de Fenda 1/4</td>
+              <td><span class="badge entrada">Entrada</span></td>
+              <td>10</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+  </div>
 
 </body>
 </html>

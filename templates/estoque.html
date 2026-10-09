@@ -3,47 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Estoque - Almoxarifado</title>
+  <title>Almoxarifado SENAI - Estoque</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/estoque.css') }}">
 </head>
 <body>
 
-  <header>
-    <h2>Sistema de Almoxarifado</h2>
-    <a href="/login">Sair</a>
-  </header>
+  <!-- BARRA SUPERIOR (TOPBAR) -->
+ <header class="topbar">
+  <div class="topbar-logo">
+    <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI">
+  </div>
+  <div class="topbar-titulo">
+    <h2>Sistema de Gestão de Almoxarifado</h2>
+  </div>
+  <a href="/login" class="btn-logout-top">Sair</a>
+</header>
 
-  <nav>
-    <ul>
-      <li><a href="/home">Início</a></li>
-      <li><a href="/movimentacoes">Movimentações</a></li>
-      <li><a href="/estoque">Estoque</a></li>
-      <li><a href="/add-usuario">Cadastrar Usuário</a></li>
-    </ul>
-  </nav>
+  <!-- CONTAINER PRINCIPAL -->
+  <div class="main-container">
 
-  <main>
-    <section>
-      <h1>Itens no Estoque</h1>
+    <!-- NAVBAR LATERAL -->
+    <aside class="sidebar">
+      <nav>
+        <a href="/home" class="nav-btn">Home</a>
+        <a href="/movimentacoes" class="nav-btn">Movimentações</a>
+        <a href="/estoque" class="nav-btn active">Estoque</a>
+        <a href="/relatorios" class="nav-btn">Relatórios</a>
+        <a href="/login" class="nav-btn logout">Sair</a>
+      </nav>
+    </aside>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Item</th>
-            <th>Quantidade</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>001</td>
-            <td>Item Exemplo</td>
-            <td>100</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </main>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="content">
+      <h1>Catálogo de Estoque</h1>
+
+      <!-- FILTRO / BUSCA -->
+      <section class="card-busca">
+        <input type="text" placeholder="Buscar por código ou nome do item...">
+        <button type="button">Buscar</button>
+      </section>
+
+      <!-- TABELA COMPLETA DE ITENS -->
+      <section class="card-tabela">
+        <h3>Lista de Itens Cadastrados</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nome do Material</th>
+              <th>Categoria</th>
+              <th>Localização</th>
+              <th>Quantidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#001</td>
+              <td>Chave de Fenda 1/4</td>
+              <td>Ferramentas</td>
+              <td>Prateleira A1</td>
+              <td>15</td>
+            </tr>
+            <tr>
+              <td>#002</td>
+              <td>Multímetro Digital</td>
+              <td>Equipamentos</td>
+              <td>Armário B2</td>
+              <td>3</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+  </div>
 
 </body>
 </html>

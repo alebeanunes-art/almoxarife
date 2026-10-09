@@ -1,0 +1,153 @@
+/* RESET BÁSICO */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* TOPBAR */
+.topbar {
+  background: #ff702e;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.topbar-logo img {
+  max-height: 60px;
+  margin-right: 50px;
+}
+
+.topbar-titulo h2 {
+  color: #ffffff;
+  font-size: 20px;
+  margin: 0;
+}
+
+/* BOTÃO DE SAIR NO CANTO DIREITO DA TOPBAR */
+.btn-logout-top {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: auto;
+}
+
+.btn-logout-top:hover {
+  text-decoration: underline;
+}
+
+/* LAYOUT E SIDEBAR */
+.main-container {
+  display: flex;
+  flex: 1;
+}
+
+.sidebar {
+  width: 200px;
+  background: #003366;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.nav-btn {
+  color: #ffffff;
+  text-decoration: none;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+  background: #002244;
+  border-left: px solid #f26522;
+}
+
+/* CONTEÚDO */
+.content {
+  flex: 1;
+  padding: 25px;
+  overflow-y: auto;
+}
+
+.content h1 {
+  color: #003366;
+  margin-bottom: 15px;
+}
+
+/* CARD DE BUSCA */
+.card-busca {
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.card-busca input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.card-busca button {
+  padding: 8px 15px;
+  background-color: #003366;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* CARD DA TABELA */
+.card-tabela {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.card-tabela h3 {
+  color: #003366;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+th {
+  color: #003366;
+}

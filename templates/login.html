@@ -2,31 +2,32 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Almoxarifado</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
-
   <main>
-    <section>
+    <!-- Card do Logo -->
+    <div class="card logo">
+      <img src="{{ url_for('static', filename='fotos/logo.png') }}" alt="SENAI">
+    </div>
+
+    <!-- Card do Form -->
+    <section class="card">
       <h1>Acesso ao Almoxarifado</h1>
-
       <form action="/login" method="POST">
-        <div>
-          <label for="username">Usuário</label>
-          <input type="text" id="username" name="username" required>
-        </div>
-
-        <div>
-          <label for="password">Senha</label>
-          <input type="password" id="password" name="password" required>
-        </div>
-
+        <label>Usuário <input type="text" name="username" required></label>
+        <label>Senha <input type="password" name="password" required></label>
         <button type="submit">Entrar</button>
       </form>
     </section>
   </main>
 
+  <div class="lado-imagem">
+    <img src="{{ url_for('static', filename='fotos/senai.png') }}" alt="Indústria">
+  </div>
+
+  <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+  
 </body>
 </html>
