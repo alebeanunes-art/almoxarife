@@ -3,10 +3,11 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -15,7 +16,7 @@ body {
 
 /* TOPBAR */
 .topbar {
-  background: #ff702e;
+  background: #eb8006;
   height: 100px;
   display: flex;
   align-items: center;
@@ -41,10 +42,9 @@ body {
 
 /* BOTÃO DE SAIR NO CANTO DIREITO DA TOPBAR */
 .btn-logout-top {
-  background-color: #003366;
+  background-color: #051f3a;
   color: #ffffff;
   text-decoration: none;
-  font-weight: bold;
   font-size: 14px;
   padding: 8px 16px;
   border-radius: 4px;
@@ -52,7 +52,7 @@ body {
 }
 
 .btn-logout-top:hover {
-  background-color: #002244;
+  background-color: #051f3a;
 }
 
 /* LAYOUT E SIDEBAR */
@@ -63,7 +63,7 @@ body {
 
 .sidebar {
   width: 200px;
-  background: #003366;
+  background: #051f3a;
   display: flex;
   flex-direction: column;
 }
@@ -78,13 +78,12 @@ body {
   color: #ffffff;
   text-decoration: none;
   padding: 12px 20px;
-  font-size: 14px;
-  font-weight: bold;
+  font-size: 20px;
 }
 
 .nav-btn:hover,
 .nav-btn.active {
-  background: #002244;
+  background: #0d3a63;
  
 }
 
@@ -96,7 +95,7 @@ body {
 }
 
 .content h1 {
-  color: #003366;
+  color: #051f3a;
   margin-bottom: 20px;
 }
 
@@ -109,7 +108,7 @@ body {
 }
 
 .card-tabela h3 {
-  color: #003366;
+  color: #051f3a;
   margin-bottom: 15px;
   font-size: 16px;
 }
@@ -123,12 +122,12 @@ table {
 th, td {
   padding: 25px;
   text-align: left;
-  border-bottom: 1px solid #002244;
+  border-bottom: 1px solid #051f3a;
   font-size: 14px;
 }
 
 th {
-  color: #003366;
+  color: #051f3a;
   background-color: #f8f9fa;
 }
 
