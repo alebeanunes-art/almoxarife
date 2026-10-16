@@ -8,21 +8,13 @@
 </head>
 <body>
 
-  <!-- BARRA SUPERIOR (TOPBAR) -->
- <header class="topbar">
-  <div class="topbar-logo">
-    <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI">
-  </div>
-  <div class="topbar-titulo">
+  <header class="topbar">
+    <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI" class="topbar-logo">
     <h2>Sistema de Gestão de Almoxarifado</h2>
-  </div>
-  <a href="/login" class="btn-logout-top">SAIR</a>
-</header>
+    <a href="/login" class="btn-logout-top">SAIR</a>
+  </header>
 
-  <!-- CONTAINER PRINCIPAL -->
   <div class="main-container">
-
-    <!-- NAVBAR LATERAL -->
     <aside class="sidebar">
       <nav>
         <a href="/home" class="nav-btn active">Home</a>
@@ -32,31 +24,96 @@
       </nav>
     </aside>
 
-    <!-- CONTEÚDO PRINCIPAL -->
     <main class="content">
       <h1>Painel Geral de Estoque</h1>
 
-      <!-- CARD COM A TABELA DE PRODUTOS -->
       <section class="card-tabela">
-        <h3>Produtos em Estoque</h3>
+        <header class="card-header">
+          <h3>Produtos em Estoque</h3>
+          <input type="text" placeholder="Pesquisar produto..." class="input-busca">
+          <button type="button" class="btn-add" onclick="abrirModal('modal-add')">+</button>
+        </header>
+
         <table>
           <thead>
             <tr>
+              <th>Foto</th>
               <th>Código</th>
               <th>Produto</th>
               <th>Categoria</th>
-              <th>Quantidade</th>
+              <th>Qtd</th>
               <th>Status</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-           
+            <tr>
+              <td><img src="https://via.placeholder.com/40" alt="Item" class="img-produto"></td>
+              <td>#001</td>
+              <td>Chave de Fenda 1/4</td>
+              <td>Ferramentas</td>
+              <td>15</td>
+              <td><span class="status ok">Disponível</span></td>
+              <td><button type="button" class="btn-editar" onclick="abrirModal('modal-editar')">Editar</button></td>
+            </tr>
           </tbody>
         </table>
       </section>
     </main>
-
   </div>
+
+  <!-- MODAL: ADICIONAR PRODUTO -->
+  <div id="modal-add" class="modal">
+    <form action="/api/produtos" method="POST" class="modal-conteudo">
+      <header class="modal-header">
+        <h3>Adicionar Produto</h3>
+        <span class="btn-fechar" onclick="fecharModal('modal-add')">&times;</span>
+      </header>
+
+      <label>Nome</label>
+      <input type="text" name="nome" required placeholder="Nome do produto">
+
+      <label>Quantidade</label>
+      <input type="number" name="quantidade" min="0" required placeholder="0">
+
+      <label>Categoria</label>
+      <input type="text" name="categoria" required placeholder="Categoria">
+
+      <label>Foto (Link)</label>
+      <input type="url" name="foto" placeholder="https://link.com/foto.jpg">
+
+      <button type="submit" class="btn-salvar">Salvar</button>
+    </form>
+  </div>
+
+  <!-- MODAL: EDITAR PRODUTO -->
+  <div id="modal-editar" class="modal">
+    <form action="/api/produtos/editar" method="POST" class="modal-conteudo">
+      <header class="modal-header">
+        <h3>Editar Produto</h3>
+        <span class="btn-fechar" onclick="fecharModal('modal-editar')">&times;</span>
+      </header>
+
+      <label>Nome</label>
+      <input type="text" name="nome" value="Chave de Fenda 1/4">
+
+      <label>Quantidade</label>
+      <input type="number" name="quantidade" value="15">
+
+      <label>Categoria</label>
+      <input type="text" name="categoria" value="Ferramentas">
+
+      <label>Foto (Link)</label>
+      <input type="url" name="foto" value="https://via.placeholder.com/40">
+
+      <button type="submit" class="btn-salvar">Atualizar</button>
+    </form>
+  </div>
+
+  <script>
+    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+  </script>
 
 </body>
 </html>

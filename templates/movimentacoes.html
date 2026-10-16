@@ -8,85 +8,54 @@
 </head>
 <body>
 
-  <!-- BARRA SUPERIOR (TOPBAR) -->
- <header class="topbar">
-  <div class="topbar-logo">
-    <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI">
-  </div>
-  <div class="topbar-titulo">
+  <header class="topbar">
+    <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI" class="topbar-logo">
     <h2>Sistema de Gestão de Almoxarifado</h2>
-  </div>
-  <a href="/login" class="btn-logout-top">SAIR</a>
-</header>
+    <a href="/login" class="btn-logout-top">SAIR</a>
+  </header>
 
-  <!-- CONTAINER PRINCIPAL -->
   <div class="main-container">
-
-    <!-- NAVBAR LATERAL -->
     <aside class="sidebar">
       <nav>
         <a href="/home" class="nav-btn">Home</a>
         <a href="/movimentacoes" class="nav-btn active">Movimentações</a>
         <a href="/estoque" class="nav-btn">Estoque</a>
-        <a href="/relatorios" class="nav-btn">Relatórios</a>
-        
+        <a href="/add-usuario" class="nav-btn">Usuários</a>
       </nav>
     </aside>
 
-    <!-- CONTEÚDO PRINCIPAL -->
     <main class="content">
       <h1>Movimentações do Estoque</h1>
 
-      <!-- FORMULÁRIO DE REGISTRO -->
-      <section class="card-form">
-        <h3>Nova Movimentação</h3>
-        <form action="/api/movimentacoes" method="POST">
-          <div class="form-group">
-            <label>Item</label>
-            <input type="text" name="item" required placeholder="Nome do material">
-          </div>
-
-          <div class="form-group">
-            <label>Tipo</label>
-            <select name="tipo" required>
-              <option value="Entrada">Entrada</option>
-          
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Quantidade</label>
-            <input type="number" name="quantidade" min="1" required placeholder="0">
-          </div>
-
-          <button type="submit" class="btn-salvar">Registrar</button>
-        </form>
-      </section>
-
-      <!-- TABELA DE HISTÓRICO -->
       <section class="card-tabela">
         <h3>Histórico Recente</h3>
+
+        <input type="text" placeholder="Pesquisar movimentação..." class="input-busca">
+
         <table>
           <thead>
             <tr>
-              <th>Data</th>
+              <th>Foto</th>
               <th>Item</th>
               <th>Tipo</th>
               <th>Qtd</th>
+              <th>Utilizador</th>
+              <th>Data e Hora</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>09/10/2026</td>
-              <td>Chave de Fenda 1/4</td>
-              <td><span class="badge entrada">Entrada</span></td>
-              <td>10</td>
+              <td><img src="" alt="Item" class="img-produto"></td>
+              <td></td>
+              <td><span class="badge entrada"></span></td>
+              <td></td>
+              <td></td>
+              <td></td>
             </tr>
           </tbody>
         </table>
       </section>
     </main>
-
   </div>
 
 </body>

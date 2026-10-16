@@ -4,10 +4,10 @@
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, sans-serif;
+  font-weight: normal;
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -24,35 +24,22 @@ body {
   padding: 0 20px;
 }
 
-.topbar-logo {
-  display: flex;
-  align-items: flex-end;
-}
-
 .topbar-logo img {
   max-height: 60px;
-  margin-right: 50px;
 }
 
-.topbar-titulo h2 {
+.topbar h2 {
   color: #ffffff;
   font-size: 20px;
-  margin: 0;
 }
 
-/* BOTÃO DE SAIR NO CANTO DIREITO DA TOPBAR */
 .btn-logout-top {
   background-color: #051f3a;
   color: #ffffff;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 15px;
   padding: 8px 16px;
   border-radius: 4px;
-  margin-right: 30px;
-}
-
-.btn-logout-top:hover {
-  background-color: #051f3a;
 }
 
 /* LAYOUT E SIDEBAR */
@@ -62,16 +49,13 @@ body {
 }
 
 .sidebar {
-  width: 200px;
+  width: 250px;
   background: #051f3a;
-  display: flex;
-  flex-direction: column;
 }
 
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .nav-btn {
@@ -84,7 +68,6 @@ body {
 .nav-btn:hover,
 .nav-btn.active {
   background: #0d3a63;
- 
 }
 
 /* CONTEÚDO PRINCIPAL */
@@ -99,35 +82,50 @@ body {
   margin-bottom: 20px;
 }
 
-/* CARD DA TABELA */
+/* TABELA DE HISTÓRICO */
 .card-tabela {
   background: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  width: 100%;
 }
 
 .card-tabela h3 {
   color: #051f3a;
+  font-size: 18px;
   margin-bottom: 15px;
-  font-size: 16px;
 }
 
-/* TABELA DE ESTOQUE */
 table {
   width: 100%;
   border-collapse: collapse;
 }
 
 th, td {
-  padding: 25px;
+  padding: 12px 10px;
   text-align: left;
   border-bottom: 1px solid #051f3a;
-  font-size: 14px;
+  font-size: 18px;
+  vertical-align: middle;
 }
 
 th {
   color: #051f3a;
-  background-color: #f8f9fa;
 }
 
+.img-produto {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #051f3a;
+  display: block;
+}
+
+.badge.entrada {
+  color: #137333;
+}
+
+.badge.saida {
+  color: #c5221f;
+}
