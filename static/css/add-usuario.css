@@ -1,23 +1,21 @@
-/* RESET BÁSICO */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, sans-serif;
+  font-weight: normal;
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
 
-/* TOPBAR */
 .topbar {
   background: #eb8006;
-  height: 100px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -25,69 +23,51 @@ body {
 }
 
 .topbar-logo {
-  display: flex;
-  align-items: flex-end;
+  height: 50px;
+  width: auto;
 }
 
-.topbar-logo img {
-  max-height: 60px;
-  margin-right: 50px;
-}
-
-.topbar-titulo h2 {
+.topbar h2 {
   color: #ffffff;
   font-size: 20px;
-  margin: 0;
 }
 
-/* BOTÃO DE SAIR NO CANTO DIREITO DA TOPBAR */
 .btn-logout-top {
   background-color: #051f3a;
   color: #ffffff;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 15px;
   padding: 8px 16px;
   border-radius: 4px;
-  margin-right: 30px;
 }
 
-.btn-logout-top:hover {
-  background-color: #051f3a;
-}
-
-/* LAYOUT E SIDEBAR */
 .main-container {
   display: flex;
   flex: 1;
 }
 
 .sidebar {
-  width: 200px;
-  background: #051f3a;
-  display: flex;
-  flex-direction: column;
+  width: 220px;
+  background-color: #051f3a;
 }
 
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .nav-btn {
   color: #ffffff;
   text-decoration: none;
   padding: 12px 20px;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .nav-btn:hover,
 .nav-btn.active {
-  background: #0d3a63;
- 
+  background-color: #0d3a63;
 }
 
-/* CONTEÚDO PRINCIPAL */
 .content {
   flex: 1;
   padding: 25px;
@@ -96,38 +76,53 @@ body {
 
 .content h1 {
   color: #051f3a;
+  font-size: 22px;
   margin-bottom: 20px;
 }
 
-/* CARD DA TABELA */
-.card-tabela {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.card-tabela h3 {
-  color: #051f3a;
-  margin-bottom: 15px;
-  font-size: 16px;
-}
-
-/* TABELA DE ESTOQUE */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 25px;
-  text-align: left;
-  border-bottom: 1px solid #051f3a;
-  font-size: 14px;
-}
-
-th {
-  color: #051f3a;
+.card-form {
   background-color: #f8f9fa;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 1600px;
 }
 
+.card-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.form-group label {
+  font-size: 14px;
+  color: #051f3a;
+}
+
+.form-group input,
+.input-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #051f3a;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #ffffff;
+}
+
+.btn-salvar {
+  background-color: #051f3a;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  margin-top: 8px;
+  width: 100%;
+}

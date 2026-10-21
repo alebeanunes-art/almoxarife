@@ -19,8 +19,7 @@
       <nav>
         <a href="/home" class="nav-btn active">Home</a>
         <a href="/movimentacoes" class="nav-btn">Movimentações</a>
-        <a href="/estoque" class="nav-btn">Estoque</a>
-        <a href="/relatorios" class="nav-btn">Relatórios</a>
+        <a href="/add-usuario" class="nav-btn">Usuários</a>
       </nav>
     </aside>
 
@@ -47,22 +46,40 @@
             </tr>
           </thead>
           <tbody>
+            {% for p in produtos %}
             <tr>
-              <td><img src="https://via.placeholder.com/40" alt="Item" class="img-produto"></td>
-              <td>#001</td>
-              <td>Chave de Fenda 1/4</td>
-              <td>Ferramentas</td>
-              <td>15</td>
-              <td><span class="status ok">Disponível</span></td>
-              <td><button type="button" class="btn-editar" onclick="abrirModal('modal-editar')">Editar</button></td>
+              <td>
+                <img src="{{ p.foto if p.foto else url_for('static', filename='fotos/default.png') }}" alt="{{ p.nome }}" class="img-produto">
+              </td>
+              <td>#{{ p.codigo }}</td>
+              <td>{{ p.nome }}</td>
+              <td>{{ p.categoria }}</td>
+              <td>{{ p.quantidade }}</td>
+              <td>
+                {% if p.quantidade > 5 %}
+                  <span class="status ok">Disponível</span>
+                {% else %}
+                  <span class="status baixo">Baixo Estoque</span>
+                {% endif %}
+              </td>
+              <td>
+                <button type="button" class="btn-editar" onclick="abrirModalEditar('{{ p.id }}', '{{ p.codigo }}', '{{ p.nome }}', '{{ p.categoria }}', '{{ p.quantidade }}', '{{ p.foto }}')">
+                  Editar
+                </button>
+              </td>
             </tr>
+            {% else %}
+            <tr>
+              <td colspan="7" style="text-align: center;">Nenhum produto cadastrado no estoque.</td>
+            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </section>
     </main>
   </div>
 
-  <!-- MODAL: ADICIONAR PRODUTO -->
+<!-- MODAL: ADICIONAR PRODUTO -->
   <div id="modal-add" class="modal">
     <form action="/api/produtos" method="POST" class="modal-conteudo">
       <header class="modal-header">
@@ -94,25 +111,43 @@
         <span class="btn-fechar" onclick="fecharModal('modal-editar')">&times;</span>
       </header>
 
+      <input type="hidden" name="id" id="edit-id">
+      <input type="hidden" name="codigo" id="edit-codigo">
+
       <label>Nome</label>
-      <input type="text" name="nome" value="Chave de Fenda 1/4">
+      <input type="text" name="nome" id="edit-nome" required>
 
       <label>Quantidade</label>
-      <input type="number" name="quantidade" value="15">
+      <input type="number" name="quantidade" id="edit-quantidade" required>
 
       <label>Categoria</label>
-      <input type="text" name="categoria" value="Ferramentas">
+      <input type="text" name="categoria" id="edit-categoria" required>
 
       <label>Foto (Link)</label>
-      <input type="url" name="foto" value="https://via.placeholder.com/40">
+      <input type="url" name="foto" id="edit-foto">
 
       <button type="submit" class="btn-salvar">Atualizar</button>
     </form>
   </div>
 
   <script>
-    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+   function abrirModal(id) {
+  document.getElementById(id).style.display = 'flex';
+}
+
+function fecharModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function abrirModalEditar(id, codigo, nome, categoria, quantidade, foto) {
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-codigo').value = codigo;
+  document.getElementById('edit-nome').value = nome;
+  document.getElementById('edit-categoria').value = categoria;
+  document.getElementById('edit-quantidade').value = quantidade;
+  document.getElementById('edit-foto').value = foto;
+  abrirModal('modal-editar');
+}
   </script>
 
 </body>

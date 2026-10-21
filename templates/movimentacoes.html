@@ -19,7 +19,6 @@
       <nav>
         <a href="/home" class="nav-btn">Home</a>
         <a href="/movimentacoes" class="nav-btn active">Movimentações</a>
-        <a href="/estoque" class="nav-btn">Estoque</a>
         <a href="/add-usuario" class="nav-btn">Usuários</a>
       </nav>
     </aside>
@@ -28,9 +27,11 @@
       <h1>Movimentações do Estoque</h1>
 
       <section class="card-tabela">
-        <h3>Histórico Recente</h3>
-
-        <input type="text" placeholder="Pesquisar movimentação..." class="input-busca">
+        <header class="card-header">
+          <h3>Histórico Recente</h3>
+          <input type="text" placeholder="Pesquisar movimentação..." class="input-busca">
+          <button type="button" class="btn-add" onclick="abrirModal('modal-mov')">+</button>
+        </header>
 
         <table>
           <thead>
@@ -44,19 +45,65 @@
             </tr>
           </thead>
           <tbody>
+            {% for m in movimentacoes %}
             <tr>
-              <td><img src="" alt="Item" class="img-produto"></td>
-              <td></td>
-              <td><span class="badge entrada"></span></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td>
+                <img src="{{ m.produto_foto if m.produto_foto else url_for('static', filename='fotos/default.png') }}" alt="{{ m.produto_nome }}" class="img-produto">
+              </td>
+              <td>{{ m.produto_nome }}</td>
+              <td><span class="badge {{ m.tipo }}">{{ m.tipo.upper() }}</span></td>
+              <td>{{ m.quantidade }}</td>
+              <td>{{ m.username }}</td>
+              <td>{{ m.data_movimentacao.strftime('%d/%m/%Y %H:%M') if m.data_movimentacao else '' }}</td>
             </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" style="text-align: center;">Nenhuma movimentação registrada.</td>
+            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </section>
     </main>
   </div>
+
+  <!-- MODAL: NOVA MOVIMENTAÇÃO -->
+  <div id="modal-mov" class="modal">
+    <form action="/movimentacoes" method="POST" class="modal-conteudo">
+      <header class="modal-header">
+        <h3>Registrar Movimentação</h3>
+        <span class="btn-fechar" onclick="fecharModal('modal-mov')">&times;</span>
+      </header>
+
+      <label>Produto</label>
+      <select name="produto_id" required class="input-select">
+        {% for p in produtos %}
+          <option value="{{ p.id }}">{{ p.nome }} (Estoque atual: {{ p.quantidade }})</option>
+        {% endfor %}
+      </select>
+
+      <label>Tipo de Movimentação</label>
+      <select name="tipo" required class="input-select">
+        <option value="entrada">Entrada</option>
+        <option value="saida">Saída</option>
+      </select>
+
+      <label>Quantidade</label>
+      <input type="number" name="quantidade" min="1" required placeholder="Digite a quantidade">
+
+      <button type="submit" class="btn-salvar">Registrar</button>
+    </form>
+  </div>
+
+  <script>
+    function abrirModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+
+    function fecharModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+  </script>
 
 </body>
 </html>

@@ -3,52 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastrar Usuário - Almoxarifado</title>
+  <title>Cadastrar Usuário - Almoxarifado SENAI</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/add-usuario.css') }}">
 </head>
 <body>
 
-  <header>
-    <h2>Sistema de Almoxarifado</h2>
-    <a href="/login">Sair</a>
+  <header class="topbar">
+    <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI" class="topbar-logo">
+    <h2>Sistema de Gestão de Almoxarifado</h2>
+    <a href="/login" class="btn-logout-top">SAIR</a>
   </header>
 
-  <nav>
-    <ul>
-      <li><a href="/home">Início</a></li>
-      <li><a href="/movimentacoes">Movimentações</a></li>
-      <li><a href="/estoque">Estoque</a></li>
-      <li><a href="/add-usuario">Cadastrar Usuário</a></li>
-    </ul>
-  </nav>
+  <div class="main-container">
+    <aside class="sidebar">
+      <nav>
+        <a href="/home" class="nav-btn">Home</a>
+        <a href="/movimentacoes" class="nav-btn">Movimentações</a>
+        <a href="/add-usuario" class="nav-btn active">Usuários</a>
+      </nav>
+    </aside>
 
-  <main>
-    <section>
+    <main class="content">
       <h1>Cadastrar Novo Usuário</h1>
 
-      <form action="/add-usuario" method="POST">
-        <div>
-          <label for="username">Nome de Usuário</label>
-          <input type="text" id="username" name="username" required>
-        </div>
+      <section class="card-form">
+        {% if mensagem %}
+          <p style="color: #137333; margin-bottom: 12px; font-size: 14px;">{{ mensagem }}</p>
+        {% endif %}
+        {% if erro %}
+          <p style="color: #c5221f; margin-bottom: 12px; font-size: 14px;">{{ erro }}</p>
+        {% endif %}
 
-        <div>
-          <label for="password">Senha</label>
-          <input type="password" id="password" name="password" required>
-        </div>
+        <form action="/add-usuario" method="POST">
+          <div class="form-group">
+            <label for="username">Nome de Usuário</label>
+            <input type="text" id="username" name="username" required placeholder="Digite o usuário">
+          </div>
 
-        <div>
-          <label for="role">Tipo de Usuário</label>
-          <select id="role" name="role" required>
-            <option value="usuario">Usuário</option>
-            <option value="admin">Administrador</option>
-          </select>
-        </div>
+          <div class="form-group">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" required placeholder="Digite a senha">
+          </div>
 
-        <button type="submit">Cadastrar</button>
-      </form>
-    </section>
-  </main>
+          <div class="form-group">
+            <label for="role">Tipo de Usuário</label>
+            <select id="role" name="role" required class="input-select">
+              <option value="usuario">Usuário</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-salvar">Cadastrar</button>
+        </form>
+      </section>
+    </main>
+  </div>
 
 </body>
 </html>

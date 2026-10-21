@@ -3,10 +3,10 @@ import mysql.connector
 import bcrypt
 
 app = Flask(__name__)
-app.secret_key = 'sua_chave_secreta_aqui'
+app.secret_key = 'senai_almoxarifado_chave'
 
 # ==========================================
-# CONEXÃO COM O BANCO DE DADOS
+# CONEXÃO BANCO DE DADOS
 # ==========================================
 def banco_conexao():
     return mysql.connector.connect(
@@ -17,45 +17,62 @@ def banco_conexao():
     )
 
 # ==========================================
-# ROTAS DAS PÁGINAS (HTML)
+# ROTAS DE PÁGINAS (HTML)
 # ==========================================
-@app.route('/')
+
+# 1. TELA DE LOGIN
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
     if request.method == 'POST':
-        return redirect(url_for('home_page'))
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        conn = banco_conexao()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM usuarios WHERE username = %s", (username,))
+        usuario = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if usuario and bcrypt.checkpw(password.encode('utf-8'), usuario['password_hash'].encode('utf-8')):
+            return redirect(url_for('home_page'))
+        
+        return render_template('login.html', erro="Usuário ou senha incorretos.")
+
     return render_template('login.html')
 
+# 2. TELA HOME (PRODUTOS DO ESTOQUE)
 @app.route('/home')
 def home_page():
     conn = banco_conexao()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM produtos")
+    cursor.execute("SELECT * FROM produtos ORDER BY id DESC")
     produtos = cursor.fetchall()
-    total_itens = sum(p['quantidade'] for p in produtos)
     cursor.close()
     conn.close()
-    return render_template('home.html', produtos=produtos, total_itens=total_itens)
+    return render_template('home.html', produtos=produtos)
 
+# 3. TELA DE MOVIMENTAÇÕES
 @app.route('/movimentacoes', methods=['GET', 'POST'])
 def movimentacoes_page():
     conn = banco_conexao()
     cursor = conn.cursor(dictionary=True)
 
-    # Processa o envio do formulário de movimentação
+    # PROCESSA NOVA MOVIMENTAÇÃO (POST)
     if request.method == 'POST':
-        tipo = request.form.get('tipo')
         produto_id = request.form.get('produto_id')
-        quantidade = int(request.form.get('quantidade'))
-        usuario_id = 1 # ID fixo padrão (alterar quando implementar sessão)
+        tipo = request.form.get('tipo')
+        quantidade = int(request.form.get('quantidade', 0))
+        usuario_id = 1  # ID padrão até implementar a sessão
 
         try:
-            # 1. Registra a movimentação na tabela
+            # Insere no histórico
             cursor.execute(
                 "INSERT INTO movimentacoes (produto_id, usuario_id, tipo, quantidade) VALUES (%s, %s, %s, %s)",
                 (produto_id, usuario_id, tipo, quantidade)
             )
-            # 2. Atualiza a quantidade do produto no estoque
+            # Atualiza a quantidade do produto
             if tipo == 'entrada':
                 cursor.execute("UPDATE produtos SET quantidade = quantidade + %s WHERE id = %s", (quantidade, produto_id))
             elif tipo == 'saida':
@@ -64,20 +81,21 @@ def movimentacoes_page():
             conn.commit()
         except mysql.connector.Error as err:
             conn.rollback()
-            print(f"Erro: {err}")
+            print(f"Erro na movimentação: {err}")
 
         cursor.close()
         conn.close()
         return redirect(url_for('movimentacoes_page'))
 
-    # Carrega dados para exibir na página (GET)
+    # CARREGA TABELAS (GET)
     cursor.execute("SELECT * FROM produtos")
     produtos = cursor.fetchall()
 
     cursor.execute("""
-        SELECT m.id, p.nome AS produto_nome, m.tipo, m.quantidade, m.data_movimentacao
+        SELECT m.id, p.nome AS produto_nome, p.foto AS produto_foto, m.tipo, m.quantidade, m.data_movimentacao, u.username
         FROM movimentacoes m
         JOIN produtos p ON m.produto_id = p.id
+        JOIN usuarios u ON m.usuario_id = u.id
         ORDER BY m.id DESC
     """)
     movimentacoes = cursor.fetchall()
@@ -86,108 +104,108 @@ def movimentacoes_page():
     conn.close()
     return render_template('movimentacoes.html', produtos=produtos, movimentacoes=movimentacoes)
 
-@app.route('/estoque', methods=['GET', 'POST'])
-def estoque_page():
-    return render_template('estoque.html')
-
+# 4. TELA DE CADASTRO DE USUÁRIO
 @app.route('/add-usuario', methods=['GET', 'POST'])
 def add_usuario_page():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        role = request.form.get('role', 'usuario')
+
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+        conn = banco_conexao()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO usuarios (username, password_hash, role) VALUES (%s, %s, %s)",
+                (username, hashed_password, role)
+            )
+            conn.commit()
+            return render_template('add-usuario.html', mensagem="Usuário cadastrado com sucesso!")
+        except mysql.connector.Error:
+            conn.rollback()
+            return render_template('add-usuario.html', erro="Nome de usuário já existe.")
+        finally:
+            cursor.close()
+            conn.close()
+
     return render_template('add-usuario.html')
 
 # ==========================================
-# API: AUTENTICAÇÃO E USUÁRIOS
+# ROTAS DE API (PRODUTOS)
 # ==========================================
-@app.route('/api/login', methods=['POST'])
-def api_login():
-    dados = request.get_json()
-    username = dados.get('username')
-    password = dados.get('password')
 
-    conn = banco_conexao()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM usuarios WHERE username = %s", (username,))
-    usuario = cursor.fetchone()
-    cursor.close()
-    conn.close()
-
-    if usuario and bcrypt.checkpw(password.encode('utf-8'), usuario['password_hash'].encode('utf-8')):
-        return jsonify({"mensagem": "Login efetuado com sucesso!", "role": usuario['role']}), 200
-    
-    return jsonify({"erro": "Usuário ou senha incorretos"}), 401
-
-@app.route('/api/usuarios', methods=['POST'])
-def api_cadastrar_usuario():
-    dados = request.get_json()
-    username = dados.get('username')
-    password = dados.get('password')
-    role = dados.get('role', 'usuario')
-
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+# CADASTRAR NOVO PRODUTO (CÓDIGO AUTOMÁTICO)
+@app.route('/api/produtos', methods=['POST'])
+def api_cadastrar_produto():
+    nome = request.form.get('nome')
+    categoria = request.form.get('categoria')
+    quantidade = request.form.get('quantidade', 0)
+    foto = request.form.get('foto', '')
 
     conn = banco_conexao()
     cursor = conn.cursor()
     try:
+        # 1. Insere o produto com um código temporário
         cursor.execute(
-            "INSERT INTO usuarios (username, password_hash, role) VALUES (%s, %s, %s)",
-            (username, hashed_password, role)
+            "INSERT INTO produtos (codigo, nome, categoria, quantidade, foto) VALUES (%s, %s, %s, %s, %s)",
+            ('TEMP', nome, categoria, quantidade, foto)
         )
+        produto_id = cursor.lastrowid # Pega o ID que o MySQL gerou automaticamente
+
+        # 2. Gera o código formatado (ex: #001, #002)
+        codigo_auto = f"{produto_id:03d}"
+
+        # 3. Atualiza o produto com o código final
+        cursor.execute("UPDATE produtos SET codigo = %s WHERE id = %s", (codigo_auto, produto_id))
+        
         conn.commit()
-        return jsonify({"mensagem": "Usuário cadastrado com sucesso!"}), 201
-    except mysql.connector.Error as err:
-        return jsonify({"erro": f"Erro no banco: {err}"}), 400
-    finally:
-        cursor.close()
-        conn.close()
-
-# ==========================================
-# API: ESTOQUE E PRODUTOS
-# ==========================================
-@app.route('/api/produtos', methods=['GET'])
-def api_listar_produtos():
-    conn = banco_conexao()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM produtos")
-    produtos = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return jsonify(produtos), 200
-
-# ==========================================
-# API: MOVIMENTAÇÕES
-# ==========================================
-@app.route('/api/movimentacoes', methods=['POST'])
-def api_registrar_movimentacao():
-    dados = request.get_json()
-    produto_id = dados.get('produto_id')
-    usuario_id = dados.get('usuario_id')
-    tipo = dados.get('tipo')
-    quantidade = int(dados.get('quantidade'))
-
-    conn = banco_conexao()
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute(
-            "INSERT INTO movimentacoes (produto_id, usuario_id, tipo, quantidade) VALUES (%s, %s, %s, %s)",
-            (produto_id, usuario_id, tipo, quantidade)
-        )
-
-        if tipo == 'entrada':
-            cursor.execute("UPDATE produtos SET quantidade = quantidade + %s WHERE id = %s", (quantidade, produto_id))
-        elif tipo == 'saida':
-            cursor.execute("UPDATE produtos SET quantidade = quantidade - %s WHERE id = %s", (quantidade, produto_id))
-
-        conn.commit()
-        return jsonify({"mensagem": "Movimentação registrada com sucesso!"}), 201
     except mysql.connector.Error as err:
         conn.rollback()
-        return jsonify({"erro": f"Erro ao movimentar: {err}"}), 400
+        print(f"Erro ao salvar produto: {err}")
     finally:
         cursor.close()
         conn.close()
 
+    return redirect(url_for('home_page'))
+
+# EDITAR PRODUTO EXISTENTE
+@app.route('/movimentacoes', methods=['GET', 'POST'])
+def movimentacoes_page():
+    conn = banco_conexao()
+    cursor = conn.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        produto_id = request.form.get('produto_id')
+        tipo = request.form.get('tipo')
+        quantidade = int(request.form.get('quantidade', 0))
+        usuario_id = 1  # ID padrão de usuário
+
+        try:
+            # 1. Registra no histórico
+            cursor.execute(
+                "INSERT INTO movimentacoes (produto_id, usuario_id, tipo, quantidade) VALUES (%s, %s, %s, %s)",
+                (produto_id, usuario_id, tipo, quantidade)
+            )
+            # 2. Atualiza a quantidade do produto
+            if tipo == 'entrada':
+                cursor.execute("UPDATE produtos SET quantidade = quantidade + %s WHERE id = %s", (quantidade, produto_id))
+            elif tipo == 'saida':
+                cursor.execute("UPDATE produtos SET quantidade = quantidade - %s WHERE id = %s", (quantidade, produto_id))
+
+            # ESSENCIAL: Salva as alterações no MySQL
+            conn.commit()
+        except mysql.connector.Error as err:
+            conn.rollback()
+            print(f"Erro ao salvar movimentação: {err}")
+        finally:
+            cursor.close()
+            conn.close()
+
+        return redirect(url_for('movimentacoes_page'))
 # ==========================================
-# INICIALIZAÇÃO DA APLICAÇÃO
+# EXECUÇÃO DO SERVIDOR
 # ==========================================
 if __name__ == '__main__':
     app.run(host='localhost', port=5000, debug=True)
