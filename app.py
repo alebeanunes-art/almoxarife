@@ -1,9 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session,jsonify
+from flask_cors import CORS
 import mysql.connector
 import bcrypt
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 app.secret_key = 'senai_almoxarifado_chave'
+
+
 
 # ==========================================
 # CONEXÃO BANCO DE DADOS
@@ -123,17 +127,102 @@ def add_usuario_page():
     return render_template('add-usuario.html')
 
 # ==========================================
-# ROTAS DE API (PRODUTOS E MOVIMENTAÇÕES AUTOMÁTICAS)
+# ROTAS DE API (AUTENTICAÇÃO, USUÁRIOS E PRODUTOS)
 # ==========================================
 
-# CADASTRAR PRODUTO
+
+# 1. API DE LOGIN
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    username = request.form.get('username') or (request.get_json() or {}).get('username')
+    password = request.form.get('password') or (request.get_json() or {}).get('password')
+
+    if not username or not password:
+        return jsonify({"sucesso": False, "erro": "Usuário e senha são obrigatórios."}), 400
+
+    conn = banco_conexao()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM usuarios WHERE username = %s", (username,))
+    usuario = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if usuario and bcrypt.checkpw(password.encode('utf-8'), usuario['password_hash'].encode('utf-8')):
+        session['usuario_id'] = usuario['id']
+        session['username'] = usuario['username']
+        session['role'] = usuario['role']
+        return jsonify({"sucesso": True, "redirecionar": url_for('home_page')}), 200
+
+    return jsonify({"sucesso": False, "erro": "Usuário ou senha incorretos."}), 401
+
+
+# 2. API DE LOGOUT
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    session.clear()
+    return jsonify({"sucesso": True, "redirecionar": url_for('login_page')}), 200
+
+
+# 3. API DE CADASTRAR USUÁRIO (APENAS ADMIN)
+@app.route('/api/usuarios', methods=['POST'])
+def api_cadastrar_usuario():
+    usuario_id = session.get('usuario_id')
+    
+    if not usuario_id:
+        return jsonify({"sucesso": False, "erro": "Sessão expirada. Faça login novamente."}), 401
+
+    # Busca o cargo atualizado direto no banco de dados para evitar sessões presas
+    conn = banco_conexao()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT role FROM usuarios WHERE id = %s", (usuario_id,))
+    usuario_atual = cursor.fetchone()
+    
+    if not usuario_atual or usuario_atual['role'] != 'admin':
+        cursor.close()
+        conn.close()
+        return jsonify({"sucesso": False, "erro": "Acesso negado. Apenas administradores."}), 403
+
+    # Se passou na validação, coleta os dados para cadastrar o novo usuário
+    username = request.form.get('username') or (request.get_json() or {}).get('username')
+    password = request.form.get('password') or (request.get_json() or {}).get('password')
+    role = request.form.get('role', 'usuario') or (request.get_json() or {}).get('role', 'usuario')
+
+    if not username or not password:
+        cursor.close()
+        conn.close()
+        return jsonify({"sucesso": False, "erro": "Campos obrigatórios ausentes."}), 400
+
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    try:
+        cursor.execute(
+            "INSERT INTO usuarios (username, password_hash, role) VALUES (%s, %s, %s)",
+            (username, hashed_password, role)
+        )
+        conn.commit()
+        return jsonify({"sucesso": True, "mensagem": "Usuário cadastrado com sucesso!"}), 201
+    except mysql.connector.Error:
+        conn.rollback()
+        return jsonify({"sucesso": False, "erro": "Erro ao cadastrar usuário (nome já existente)."}), 409
+    finally:
+        cursor.close()
+        conn.close()
+
+# 4. API DE CADASTRAR PRODUTO (+ HISTÓRICO AUTOMÁTICO)
 @app.route('/api/produtos', methods=['POST'])
 def api_cadastrar_produto():
-    nome = request.form.get('nome')
-    categoria = request.form.get('categoria')
-    quantidade = int(request.form.get('quantidade', 0))
-    foto = request.form.get('foto', '')
-    usuario_id = session.get('usuario_id', 1)
+    if 'usuario_id' not in session:
+        return jsonify({"sucesso": False, "erro": "Sessão expirada. Faça login novamente."}), 401
+
+    dados = request.form or request.get_json() or {}
+    nome = dados.get('nome')
+    categoria = dados.get('categoria')
+    quantidade = int(dados.get('quantidade', 0))
+    foto = dados.get('foto', '')
+    usuario_id = session.get('usuario_id')
+
+    if not nome or not categoria:
+        return jsonify({"sucesso": False, "erro": "Nome e categoria são obrigatórios."}), 400
 
     conn = banco_conexao()
     cursor = conn.cursor()
@@ -153,32 +242,43 @@ def api_cadastrar_produto():
             )
 
         conn.commit()
+        return jsonify({"sucesso": True, "mensagem": "Produto cadastrado com sucesso!", "redirecionar": url_for('home_page')}), 201
     except mysql.connector.Error as err:
         conn.rollback()
-        print(f"Erro ao salvar produto: {err}")
+        return jsonify({"sucesso": False, "erro": f"Erro no banco de dados: {err}"}), 500
     finally:
         cursor.close()
         conn.close()
 
-    return redirect(url_for('home_page'))
 
-# EDITAR PRODUTO
-@app.route('/api/produtos/editar', methods=['POST'])
+# 5. API DE EDITAR PRODUTO (+ HISTÓRICO AUTOMÁTICO DE ENTRADA/SAÍDA)
+@app.route('/api/produtosEditar', methods=['POST'])
 def api_editar_produto():
-    produto_id = request.form.get('id')
-    codigo = request.form.get('codigo')
-    nome = request.form.get('nome')
-    categoria = request.form.get('categoria')
-    nova_quantidade = int(request.form.get('quantidade', 0))
-    foto = request.form.get('foto', '')
-    usuario_id = session.get('usuario_id', 1)
+    if 'usuario_id' not in session:
+        return jsonify({"sucesso": False, "erro": "Sessão expirada. Faça login novamente."}), 401
+
+    dados = request.form or request.get_json() or {}
+    produto_id = dados.get('id')
+    codigo = dados.get('codigo')
+    nome = dados.get('nome')
+    categoria = dados.get('categoria')
+    nova_quantidade = int(dados.get('quantidade', 0))
+    foto = dados.get('foto', '')
+    usuario_id = session.get('usuario_id')
+
+    if not produto_id or not nome:
+        return jsonify({"sucesso": False, "erro": "ID e Nome do produto são obrigatórios."}), 400
 
     conn = banco_conexao()
     cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute("SELECT quantidade FROM produtos WHERE id = %s", (produto_id,))
         prod_atual = cursor.fetchone()
-        qtd_antiga = prod_atual['quantidade'] if prod_atual else 0
+        
+        if not prod_atual:
+            return jsonify({"sucesso": False, "erro": "Produto não encontrado."}), 404
+            
+        qtd_antiga = prod_atual['quantidade']
 
         cursor.execute("""
             UPDATE produtos 
@@ -199,17 +299,15 @@ def api_editar_produto():
             )
 
         conn.commit()
+        return jsonify({"sucesso": True, "mensagem": "Produto atualizado com sucesso!", "redirecionar": url_for('home_page')}), 200
     except mysql.connector.Error as err:
         conn.rollback()
-        print(f"Erro ao editar produto: {err}")
+        return jsonify({"sucesso": False, "erro": f"Erro ao editar: {err}"}), 500
     finally:
         cursor.close()
         conn.close()
-
-    return redirect(url_for('home_page'))
-
 # ==========================================
 # EXECUÇÃO DO SERVIDOR
 # ==========================================
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
