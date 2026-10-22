@@ -22,11 +22,11 @@ CREATE TABLE IF NOT EXISTS produtos (
 -- Tabela de Movimentações
 CREATE TABLE IF NOT EXISTS movimentacoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    produto_id INT NOT NULL,
-    usuario_id INT NOT NULL,
+    produto_id INT NULL,
+    usuario_id INT NULL,
     tipo ENUM('entrada', 'saida') NOT NULL,
     quantidade INT NOT NULL,
     data_movimentacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+    FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE SET NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
 );

@@ -11,15 +11,18 @@
   <header class="topbar">
     <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI" class="topbar-logo">
     <h2>Sistema de Gestão de Almoxarifado</h2>
-    <a href="/login" class="btn-logout-top">SAIR</a>
+    <a href="/logout" class="btn-logout-top">SAIR</a>
   </header>
 
   <div class="main-container">
     <aside class="sidebar">
       <nav>
         <a href="/home" class="nav-btn">Home</a>
-        <a href="/movimentacoes" class="nav-btn active">Movimentações</a>
-        <a href="/add-usuario" class="nav-btn">Usuários</a>
+        <a href="/movimentacoes" class="nav-btn">Movimentações</a>
+        
+        {% if session.get('role') == 'admin' %}
+          <a href="/add-usuario" class="nav-btn">Usuários</a>
+        {% endif %}
       </nav>
     </aside>
 
@@ -30,7 +33,6 @@
         <header class="card-header">
           <h3>Histórico Recente</h3>
           <input type="text" placeholder="Pesquisar movimentação..." class="input-busca">
-          <button type="button" class="btn-add" onclick="abrirModal('modal-mov')">+</button>
         </header>
 
         <table>
@@ -67,42 +69,27 @@
     </main>
   </div>
 
-  <!-- MODAL: NOVA MOVIMENTAÇÃO -->
-  <div id="modal-mov" class="modal">
-    <form action="/movimentacoes" method="POST" class="modal-conteudo">
-      <header class="modal-header">
-        <h3>Registrar Movimentação</h3>
-        <span class="btn-fechar" onclick="fecharModal('modal-mov')">&times;</span>
-      </header>
-
-      <label>Produto</label>
-      <select name="produto_id" required class="input-select">
-        {% for p in produtos %}
-          <option value="{{ p.id }}">{{ p.nome }} (Estoque atual: {{ p.quantidade }})</option>
-        {% endfor %}
-      </select>
-
-      <label>Tipo de Movimentação</label>
-      <select name="tipo" required class="input-select">
-        <option value="entrada">Entrada</option>
-        <option value="saida">Saída</option>
-      </select>
-
-      <label>Quantidade</label>
-      <input type="number" name="quantidade" min="1" required placeholder="Digite a quantidade">
-
-      <button type="submit" class="btn-salvar">Registrar</button>
-    </form>
-  </div>
-
   <script>
-    function abrirModal(id) {
-      document.getElementById(id).style.display = 'flex';
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+      const inputBusca = document.querySelector('.input-busca');
+      const tabela = document.querySelector('table tbody');
 
-    function fecharModal(id) {
-      document.getElementById(id).style.display = 'none';
-    }
+      if (inputBusca && tabela) {
+        inputBusca.addEventListener('keyup', function() {
+          const termo = inputBusca.value.toLowerCase().trim();
+          const linhas = tabela.querySelectorAll('tr');
+
+          linhas.forEach(linha => {
+            const textoLinha = linha.textContent.toLowerCase();
+            if (textoLinha.includes(termo)) {
+              linha.style.display = '';
+            } else {
+              linha.style.display = 'none';
+            }
+          });
+        });
+      }
+    });
   </script>
 
 </body>

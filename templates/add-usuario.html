@@ -15,13 +15,17 @@
   </header>
 
   <div class="main-container">
-    <aside class="sidebar">
-      <nav>
-        <a href="/home" class="nav-btn">Home</a>
-        <a href="/movimentacoes" class="nav-btn">Movimentações</a>
-        <a href="/add-usuario" class="nav-btn active">Usuários</a>
-      </nav>
-    </aside>
+   <aside class="sidebar">
+  <nav>
+    <a href="/home" class="nav-btn">Home</a>
+    <a href="/movimentacoes" class="nav-btn">Movimentações</a>
+    
+    <!-- Mostra o botão apenas se o utilizador logado for 'admin' -->
+    {% if session.get('role') == 'admin' %}
+      <a href="/add-usuario" class="nav-btn">Usuários</a>
+    {% endif %}
+  </nav>
+</aside>
 
     <main class="content">
       <h1>Cadastrar Novo Usuário</h1>

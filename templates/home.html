@@ -11,15 +11,18 @@
   <header class="topbar">
     <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI" class="topbar-logo">
     <h2>Sistema de Gestão de Almoxarifado</h2>
-    <a href="/login" class="btn-logout-top">SAIR</a>
+    <a href="/logout" class="btn-logout-top">SAIR</a>
   </header>
 
   <div class="main-container">
     <aside class="sidebar">
       <nav>
-        <a href="/home" class="nav-btn active">Home</a>
+        <a href="/home" class="nav-btn">Home</a>
         <a href="/movimentacoes" class="nav-btn">Movimentações</a>
-        <a href="/add-usuario" class="nav-btn">Usuários</a>
+        
+        {% if session.get('role') == 'admin' %}
+          <a href="/add-usuario" class="nav-btn">Usuários</a>
+        {% endif %}
       </nav>
     </aside>
 
@@ -79,7 +82,7 @@
     </main>
   </div>
 
-<!-- MODAL: ADICIONAR PRODUTO -->
+  <!-- MODAL: ADICIONAR PRODUTO -->
   <div id="modal-add" class="modal">
     <form action="/api/produtos" method="POST" class="modal-conteudo">
       <header class="modal-header">
@@ -126,28 +129,50 @@
       <label>Foto (Link)</label>
       <input type="url" name="foto" id="edit-foto">
 
-      <button type="submit" class="btn-salvar">Atualizar</button>
+      <button type="submit" class="btn-atualizar">Atualizar</button>
     </form>
   </div>
 
   <script>
-   function abrirModal(id) {
-  document.getElementById(id).style.display = 'flex';
-}
+    function abrirModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
 
-function fecharModal(id) {
-  document.getElementById(id).style.display = 'none';
-}
+    function fecharModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
 
-function abrirModalEditar(id, codigo, nome, categoria, quantidade, foto) {
-  document.getElementById('edit-id').value = id;
-  document.getElementById('edit-codigo').value = codigo;
-  document.getElementById('edit-nome').value = nome;
-  document.getElementById('edit-categoria').value = categoria;
-  document.getElementById('edit-quantidade').value = quantidade;
-  document.getElementById('edit-foto').value = foto;
-  abrirModal('modal-editar');
-}
+    function abrirModalEditar(id, codigo, nome, categoria, quantidade, foto) {
+      document.getElementById('edit-id').value = id;
+      document.getElementById('edit-codigo').value = codigo;
+      document.getElementById('edit-nome').value = nome;
+      document.getElementById('edit-categoria').value = categoria;
+      document.getElementById('edit-quantidade').value = quantidade;
+      document.getElementById('edit-foto').value = foto;
+      abrirModal('modal-editar');
+    }
+
+    // Filtro da Barra de Pesquisa
+    document.addEventListener('DOMContentLoaded', function() {
+      const inputBusca = document.querySelector('.input-busca');
+      const tabela = document.querySelector('table tbody');
+
+      if (inputBusca && tabela) {
+        inputBusca.addEventListener('keyup', function() {
+          const termo = inputBusca.value.toLowerCase().trim();
+          const linhas = tabela.querySelectorAll('tr');
+
+          linhas.forEach(linha => {
+            const textoLinha = linha.textContent.toLowerCase();
+            if (textoLinha.includes(termo)) {
+              linha.style.display = '';
+            } else {
+              linha.style.display = 'none';
+            }
+          });
+        });
+      }
+    });
   </script>
 
 </body>
