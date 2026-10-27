@@ -107,31 +107,31 @@
   </div>
 
   <!-- MODAL: EDITAR PRODUTO -->
-  <div id="modal-editar" class="modal">
-    <form action="/api/produtos/editar" method="POST" class="modal-conteudo">
-      <header class="modal-header">
+  <!-- MODAL DE EDIÇÃO -->
+<div id="modal-editar" class="modal">
+    <form action="/api/produtosEditar" method="POST" class="modal-conteudo">
         <h3>Editar Produto</h3>
-        <span class="btn-fechar" onclick="fecharModal('modal-editar')">&times;</span>
-      </header>
+        
+        <!-- Campo oculto importantíssimo para enviar o ID do produto -->
+        <input type="hidden" name="id" id="edit-id">
+        <input type="hidden" name="codigo" id="edit-codigo">
 
-      <input type="hidden" name="id" id="edit-id">
-      <input type="hidden" name="codigo" id="edit-codigo">
+        <label>Nome:</label>
+        <input type="text" name="nome" id="edit-nome" required>
 
-      <label>Nome</label>
-      <input type="text" name="nome" id="edit-nome" required>
+        <label>Quantidade:</label>
+        <input type="number" name="quantidade" id="edit-quantidade" required>
 
-      <label>Quantidade</label>
-      <input type="number" name="quantidade" id="edit-quantidade" required>
+        <label>Categoria:</label>
+        <input type="text" name="categoria" id="edit-categoria" required>
 
-      <label>Categoria</label>
-      <input type="text" name="categoria" id="edit-categoria" required>
+        <label>Foto (Link):</label>
+        <input type="text" name="foto" id="edit-foto">
 
-      <label>Foto (Link)</label>
-      <input type="url" name="foto" id="edit-foto">
-
-      <button type="submit" class="btn-atualizar">Atualizar</button>
+        <button type="submit" class="btn-atualizar">Atualizar</button>
+        <button type="button" onclick="fecharModal('modal-editar')">Cancelar</button>
     </form>
-  </div>
+</div>
 
   <script>
     function abrirModal(id) {
