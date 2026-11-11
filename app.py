@@ -302,5 +302,36 @@ def api_cadastrar_usuario():
         cursor.close()
         conn.close()
 
+        import bcrypt
+
+def garantir_admin_padrao():
+    conn = banco_conexao()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        # Verifica se já existe algum admin cadastrado
+        cursor.execute("SELECT * FROM usuarios WHERE role = 'admin' LIMIT 1")
+        admin_existente = cursor.fetchone()
+
+        if not admin_existente:
+            # Se não existir nenhum admin, cria o padrão
+            senha_hash = bcrypt.hashpw('1503'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            cursor.execute(
+                "INSERT INTO usuarios (username, password_hash, role) VALUES (%s, %s, %s)",
+                ('alebeanunes@gmail.com', senha_hash, 'admin')
+            )
+            conn.commit()
+            print("Administrador padrão criado automaticamente com sucesso!")
+        else:
+            print("Administrador padrão já existe na base de dados.")
+    except Exception as err:
+        print(f"Erro ao verificar/criar administrador padrão: {err}")
+    finally:
+        cursor.close()
+        conn.close()
+
+# Chame a função logo após inicializar o app para rodar sempre que o servidor subir
+with app.app_context():
+    garantir_admin_padrao()
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
