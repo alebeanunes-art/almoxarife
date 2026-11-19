@@ -2,19 +2,25 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Almoxarifado</title>
+  <!-- Importação da folha de estilos CSS específica para a página de login -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
+  
+  <!-- Contentor principal da página de autenticação -->
   <main>
-    <!-- Card do Logo -->
+    <!-- Bloco (Card) visual que exibe o logotipo em destaque -->
     <div class="card logo">
       <img src="{{ url_for('static', filename='fotos/senaibranco.png') }}" alt="SENAI">
     </div>
 
-    <!-- Card do Form -->
+    <!-- Bloco (Card) contendo o formulário de acesso ao sistema -->
     <section class="card">
       <h1>Acesso ao Almoxarifado</h1>
+      
+      <!-- Formulário de login que envia os dados via método POST para a rota /login -->
       <form action="/login" method="POST">
         <label>Usuário <input type="text" name="username" required></label>
         <label>Senha <input type="password" name="password" required></label>
@@ -23,10 +29,12 @@
     </section>
   </main>
 
+  <!-- Secção lateral utilizada para exibição de imagem institucional/industrial -->
   <div class="lado-imagem">
     <img src="{{ url_for('static', filename='fotos/senai.png') }}" alt="Indústria">
   </div>
 
+  <!-- Importação do script JavaScript para interações da página de login -->
   <script src="{{ url_for('static', filename='js/login.js') }}"></script>
   
 </body>

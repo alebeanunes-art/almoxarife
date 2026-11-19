@@ -1,11 +1,15 @@
+/* ========================================== */
+/* RESET GLOBAL E CONFIGURAÇÕES DE TIPOGRAFIA  */
+/* ========================================== */
 * {
-  box-sizing: border-box;
+  box-sizing: border-box; /* Garante que padding e border não alterem as largura/altura totais dos elementos */
   margin: 0;
   padding: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif; /* Fonte moderna e limpa nativa do sistema */
   font-weight: normal;
 }
 
+/* Configuração geral do corpo da página (Viewport de altura total) */
 body {
   background-color: #ffffff;
   display: flex;
@@ -13,8 +17,11 @@ body {
   height: 100vh;
 }
 
+/* ========================================== */
+/* CABEÇALHO SUPERIOR (TOPBAR)                 */
+/* ========================================== */
 .topbar {
-  background: #eb8006;
+  background: #eb8006; /* Cor principal alinhada à identidade visual (Laranja SENAI) */
   height: 70px;
   display: flex;
   align-items: center;
@@ -24,7 +31,7 @@ body {
 
 .topbar-logo {
   height: 50px;
-  width: auto;
+  width: auto; /* Mantém a proporção correta da imagem do logo */
 }
 
 .topbar h2 {
@@ -32,8 +39,9 @@ body {
   font-size: 20px;
 }
 
+/* Botão de terminar sessão (Sair) localizado no canto superior direito */
 .btn-logout-top {
-  background-color: #051f3a;
+  background-color: #051f3a; /* Azul institucional escuro */
   color: #ffffff;
   text-decoration: none;
   font-size: 15px;
@@ -41,14 +49,17 @@ body {
   border-radius: 2px;
 }
 
+/* ========================================== */
+/* CONTENTOR PRINCIPAL E BARRA LATERAL (SIDEBAR) */
+/* ========================================== */
 .main-container {
   display: flex;
-  flex: 1;
+  flex: 1; /* Ocupa o espaço restante da altura da tela */
 }
 
 .sidebar {
   width: 220px;
-  background-color: #051f3a;
+  background-color: #051f3a; /* Fundo azul escuro padrão para navegação lateral */
 }
 
 .sidebar nav {
@@ -56,6 +67,7 @@ body {
   flex-direction: column;
 }
 
+/* Estilização base dos botões de navegação na barra lateral */
 .nav-btn {
   color: #ffffff;
   text-decoration: none;
@@ -63,15 +75,19 @@ body {
   font-size: 16px;
 }
 
+/* Efeito visual ao passar o rato (hover) ou quando a rota está ativa */
 .nav-btn:hover,
 .nav-btn.active {
-  background-color: #0d3a63;
+  background-color: #0d3a63; /* Tom de azul ligeiramente mais claro para destaque */
 }
 
+/* ========================================== */
+/* ÁREA DE CONTEÚDO PRINCIPAL                  */
+/* ========================================== */
 .content {
   flex: 1;
   padding: 25px;
-  overflow-y: auto;
+  overflow-y: auto; /* Permite scroll vertical caso o conteúdo exceda a altura */
 }
 
 .content h1 {
@@ -80,8 +96,11 @@ body {
   margin-bottom: 20px;
 }
 
+/* ========================================== */
+/* CARTÃO E FORMULÁRIOS                      */
+/* ========================================== */
 .card-form {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* Fundo cinza claro suave para o bloco do formulário */
   padding: 30px;
   border-radius: 10px;
   max-width: 1600px;
@@ -90,7 +109,7 @@ body {
 .card-form form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 12px; /* Espaçamento uniforme entre os elementos do formulário */
 }
 
 .form-group {
@@ -105,6 +124,7 @@ body {
   color: #051f3a;
 }
 
+/* Estilização unificada para caixas de texto, senhas e selects */
 .form-group input,
 .input-select {
   width: 100%;
@@ -115,6 +135,7 @@ body {
   background-color: #ffffff;
 }
 
+/* Botão principal de submissão do formulário (Ex: Cadastrar) */
 .btn-salvar {
   background-color: #051f3a;
   color: #ffffff;

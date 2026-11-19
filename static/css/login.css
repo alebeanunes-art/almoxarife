@@ -1,3 +1,6 @@
+/* ========================================== */
+/* RESET GLOBAL E CONFIGURAÇÕES DE TIPOGRAFIA  */
+/* ========================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,18 +9,23 @@
   font-weight: normal;
 }
 
+/* Corpo da página configurado com fundo azul escuro e ecrã completo (100vh) em flexbox */
 body {
-  background-color: #051f3a;
+  background-color: #051f3a; /* Azul institucional escuro de fundo */
   display: flex;
   height: 100vh;
 }
 
+/* ========================================== */
+/* DIVISÃO DE LAYOUT EM DUAS COLUNAS (50% / 50%) */
+/* ========================================== */
 main,
 .lado-imagem {
-  width: 50%;
+  width: 50%; /* Cada bloco ocupa metade da largura da tela */
   height: 100%;
 }
 
+/* Área principal (esquerda) que contém o formulário de login centralizado */
 main {
   display: flex;
   flex-direction: column;
@@ -26,7 +34,9 @@ main {
   gap: 20px;
 }
 
-/* FORMULÁRIO E TIPOGRAFIA */
+/* ========================================== */
+/* FORMULÁRIO E TIPOGRAFIA DE LOGIN           */
+/* ========================================== */
 h1 {
   color: #ffffff;
   font-size: 30px;
@@ -35,34 +45,39 @@ h1 {
 label {
   display: block;
   font-size: 14px;
-  margin-bottom:14px;
+  margin-bottom: 14px;
   color: #ffffff;
 }
 
+/* Regras gerais unificadas para os campos de input e botões */
 input,
 button {
   font-family: inherit;
   font-weight: normal;
   width: 100%;
-  padding:15px;
+  padding: 15px;
   border-radius: 2px;
 }
 
+/* Estilização específica das caixas de texto de utilizador e senha */
 input {
-  border:1px solid #ccc;
+  border: 1px solid #ccc;
   margin-top: 4px;
 }
 
+/* Estilização do botão de submissão (Entrar) na cor Laranja SENAI */
 button {
-  background-color: #eb8006;
+  background-color: #eb8006; /* Laranja institucional */
   color: #ffffff;
   border: none;
   cursor: pointer;
 }
 
-/* IMAGEM */
+/* ========================================== */
+/* IMAGEM INSTITUCIONAL LATERAL (DIREITA)     */
+/* ========================================== */
 .lado-imagem img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Garante que a imagem preenche todo o espaço sem distorcer as proporções */
 }

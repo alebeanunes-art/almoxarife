@@ -3,10 +3,12 @@ from flask_cors import CORS
 import mysql.connector
 import bcrypt
 
+# Inicialização da aplicação Flask e configurações de segurança/CORS
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 app.secret_key = 'senai_almoxarifado_chave'
 
+# Função responsável por estabelecer e retornar a conexão com a base de dados MySQL
 def banco_conexao():
     return mysql.connector.connect(
         host='localhost',
@@ -15,17 +17,24 @@ def banco_conexao():
         database='almoxarife'
     )
 
-# Funções auxiliares para hash e verificação de senha
+# ==========================================
+# FUNÇÕES AUXILIARES DE SEGURANÇA (BCRYPT)
+# ==========================================
+
+# Gera um hash seguro (criptografado) a partir de uma senha em texto plano
 def gerar_hash(senha):
     return bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
+# Compara uma senha fornecida com o hash guardado na base de dados para validação
 def verificar_senha(senha, senha_hash):
     return bcrypt.checkpw(senha.encode('utf-8'), senha_hash.encode('utf-8'))
 
 
 # ==========================================
-# ROTAS DE PÁGINAS (HTML)
+# ROTAS DE PÁGINAS (RENDERIZAÇÃO HTML)
 # ==========================================
+
+# Rota principal e de login: gere a autenticação via formulário web
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
@@ -40,6 +49,7 @@ def login_page():
         cursor.close()
         conn.close()
 
+        # Valida as credenciais utilizando o bcrypt
         if usuario and verificar_senha(password, usuario['password_hash']):
             session['usuario_id'] = usuario['id']
             session['username'] = usuario['username']
@@ -50,11 +60,13 @@ def login_page():
 
     return render_template('login.html')
 
+# Encerra a sessão atual do utilizador e redireciona para o login
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login_page'))
 
+# Página inicial do sistema (Home): lista todos os produtos cadastrados
 @app.route('/home')
 def home_page():
     if 'usuario_id' not in session:
@@ -68,6 +80,7 @@ def home_page():
     conn.close()
     return render_template('home.html', produtos=produtos)
 
+# Página de movimentações: lista o histórico e permite registrar entradas/saídas via formulário HTML
 @app.route('/movimentacoes', methods=['GET', 'POST'])
 def movimentacoes_page():
     if 'usuario_id' not in session:
@@ -83,6 +96,7 @@ def movimentacoes_page():
         usuario_id = session.get('usuario_id', 1)
 
         try:
+            # Insere o registo da movimentação e atualiza o stock do produto correspondente
             cursor.execute(
                 "INSERT INTO movimentacoes (produto_id, usuario_id, tipo, quantidade) VALUES (%s, %s, %s, %s)",
                 (produto_id, usuario_id, tipo, quantidade)
@@ -103,6 +117,7 @@ def movimentacoes_page():
     cursor.execute("SELECT * FROM produtos")
     produtos = cursor.fetchall()
 
+    # Consulta com JOIN para trazer os nomes dos produtos e utilizadores associados às movimentações
     cursor.execute("""
         SELECT 
             m.id, m.tipo, m.quantidade, m.data_movimentacao,
@@ -119,6 +134,7 @@ def movimentacoes_page():
     conn.close()
     return render_template('movimentacoes.html', produtos=produtos, movimentacoes=movimentacoes)
 
+# Página restrita a administradores para o cadastro de novos utilizadores via painel web
 @app.route('/add-usuario', methods=['GET', 'POST'])
 def add_usuario_page():
     if session.get('role') != 'admin':
@@ -151,8 +167,10 @@ def add_usuario_page():
 
 
 # ==========================================
-# ROTAS DE API (JSON)
+# ROTAS DE API (COMUNICAÇÃO EM JSON)
 # ==========================================
+
+# API de login: valida credenciais e retorna resposta JSON para requisições assíncronas (AJAX/Fetch)
 @app.route('/api/login', methods=['POST'])
 def api_login():
     dados = request.get_json() or request.form
@@ -178,11 +196,13 @@ def api_login():
 
     return jsonify({"sucesso": False, "erro": "Usuário ou senha incorretos."}), 401
 
+# API de logout: limpa a sessão atual via pedido JSON
 @app.route('/api/logout', methods=['POST'])
 def api_logout():
     session.clear()
     return jsonify({"sucesso": True, "mensagem": "Logout efetuado com sucesso!"}), 200
 
+# API para listar todos os produtos em formato JSON
 @app.route('/api/produtos', methods=['GET'])
 def api_listar_produtos():
     conn = banco_conexao()
@@ -193,6 +213,7 @@ def api_listar_produtos():
     conn.close()
     return jsonify(produtos), 200
 
+# API para cadastrar um novo produto (aceita tanto JSON quanto formulário tradicional)
 @app.route('/api/produtos', methods=['POST'])
 def api_cadastrar_produto():
     if request.is_json:
@@ -209,6 +230,7 @@ def api_cadastrar_produto():
     conn = banco_conexao()
     cursor = conn.cursor()
     try:
+        # Insere o produto com código temporário e depois atualiza formatado com base no ID gerado
         cursor.execute(
             "INSERT INTO produtos (codigo, nome, categoria, quantidade, foto) VALUES (%s, %s, %s, %s, %s)",
             ('TEMP', nome, categoria, quantidade, foto)
@@ -235,6 +257,7 @@ def api_cadastrar_produto():
         cursor.close()
         conn.close()
 
+# API para editar um produto existente e registrar automaticamente a movimentação de diferença no stock
 @app.route('/api/produtosEditar', methods=['POST'])
 def api_editar_produto():
     if request.is_json:
@@ -263,6 +286,7 @@ def api_editar_produto():
             WHERE id = %s
         """, (codigo, nome, categoria, nova_quantidade, foto, produto_id))
 
+        # Calcula a diferença de quantidade para atualizar o histórico de movimentações
         diferenca = nova_quantidade - qtd_antiga
         if diferenca != 0:
             tipo = 'entrada' if diferenca > 0 else 'saida'
@@ -284,6 +308,7 @@ def api_editar_produto():
         cursor.close()
         conn.close()
 
+# API para listar todas as movimentações do sistema em formato JSON
 @app.route('/api/movimentacoes', methods=['GET'])
 def api_listar_movimentacoes():
     conn = banco_conexao()
@@ -304,6 +329,7 @@ def api_listar_movimentacoes():
     conn.close()
     return jsonify(movimentacoes), 200
 
+# API para cadastrar um novo utilizador via requisição JSON
 @app.route('/api/usuarios', methods=['POST'])
 def api_cadastrar_usuario():
     dados = request.get_json() or request.form
@@ -329,6 +355,12 @@ def api_cadastrar_usuario():
         cursor.close()
         conn.close()
 
+
+# ==========================================
+# INICIALIZAÇÃO E CONFIGURAÇÃO DO ADMINISTRADOR
+# ==========================================
+
+# Garante que existe sempre um administrador padrão na base de dados ao iniciar o servidor
 def garantir_admin_padrao():
     conn = banco_conexao()
     cursor = conn.cursor(dictionary=True)
@@ -352,8 +384,10 @@ def garantir_admin_padrao():
         cursor.close()
         conn.close()
 
+# Executa a verificação do administrador logo no arranque da aplicação Flask
 with app.app_context():
     garantir_admin_padrao()
 
+# Executa o servidor web local em modo de depuração (debug)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -4,38 +4,53 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Almoxarifado SENAI - Home</title>
+  <!-- Importação da folha de estilos CSS da página Home -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
 <body>
 
+  <!-- ========================================== -->
+  <!-- CABEÇALHO SUPERIOR DA APLICAÇÃO             -->
+  <!-- ========================================== -->
   <header class="topbar">
     <img src="{{ url_for('static', filename='fotos/senai_logo.png') }}" alt="Logo SENAI" class="topbar-logo">
     <h2>Sistema de Gestão de Almoxarifado</h2>
     <a href="/logout" class="btn-logout-top">SAIR</a>
   </header>
 
+  <!-- ========================================== -->
+  <!-- CONTENTOR PRINCIPAL (SIDEBAR + CONTEÚDO)   -->
+  <!-- ========================================== -->
   <div class="main-container">
+    
+    <!-- Barra lateral de navegação -->
     <aside class="sidebar">
       <nav>
         <a href="/home" class="nav-btn">Home</a>
         <a href="/movimentacoes" class="nav-btn">Movimentações</a>
         
+        <!-- Renderização condicional: Exibe o botão de utilizadores apenas se o perfil logado for 'admin' -->
         {% if session.get('role') == 'admin' %}
           <a href="/add-usuario" class="nav-btn">Usuários</a>
         {% endif %}
       </nav>
     </aside>
 
+    <!-- Secção principal da página (Painel de Estoque) -->
     <main class="content">
       <h1>Painel Geral de Estoque</h1>
 
+      <!-- Cartão que encapsula a tabela de produtos e ferramentas de busca -->
       <section class="card-tabela">
         <header class="card-header">
           <h3>Produtos em Estoque</h3>
+          <!-- Campo de pesquisa instantânea em tempo real via JavaScript -->
           <input type="text" placeholder="Pesquisar produto..." class="input-busca">
+          <!-- Botão para abrir o modal de adição de novo produto -->
           <button type="button" class="btn-add" onclick="abrirModal('modal-add')">+</button>
         </header>
 
+        <!-- Tabela responsiva de listagem de stock -->
         <table>
           <thead>
             <tr>
@@ -49,9 +64,11 @@
             </tr>
           </thead>
           <tbody>
+            <!-- Loop Jinja2 para percorrer todos os produtos vindos da base de dados -->
             {% for p in produtos %}
             <tr>
               <td>
+                <!-- Exibe a foto do produto ou uma imagem padrão caso o campo esteja vazio -->
                 <img src="{{ p.foto if p.foto else url_for('static', filename='fotos/default.png') }}" alt="{{ p.nome }}" class="img-produto">
               </td>
               <td>#{{ p.codigo }}</td>
@@ -59,6 +76,7 @@
               <td>{{ p.categoria }}</td>
               <td>{{ p.quantidade }}</td>
               <td>
+                <!-- Define o status visual baseado na quantidade em stock (> 5 disponível, senão baixo estoque) -->
                 {% if p.quantidade > 5 %}
                   <span class="status ok">Disponível</span>
                 {% else %}
@@ -66,12 +84,14 @@
                 {% endif %}
               </td>
               <td>
+                <!-- Botão para abrir o modal de edição preenchendo os dados do respetivo produto -->
                 <button type="button" class="btn-editar" onclick="abrirModalEditar('{{ p.id }}', '{{ p.codigo }}', '{{ p.nome }}', '{{ p.categoria }}', '{{ p.quantidade }}', '{{ p.foto }}')">
                   Editar
                 </button>
               </td>
             </tr>
             {% else %}
+            <!-- Linha exibida caso a tabela de produtos esteja vazia -->
             <tr>
               <td colspan="7" style="text-align: center;">Nenhum produto cadastrado no estoque.</td>
             </tr>
@@ -82,7 +102,9 @@
     </main>
   </div>
 
-  <!-- MODAL: ADICIONAR PRODUTO -->
+  <!-- ========================================== -->
+  <!-- MODAL: ADICIONAR PRODUTO                   -->
+  <!-- ========================================== -->
   <div id="modal-add" class="modal">
     <form action="/api/produtos" method="POST" class="modal-conteudo">
       <header class="modal-header">
@@ -106,13 +128,14 @@
     </form>
   </div>
 
-  <!-- MODAL: EDITAR PRODUTO -->
-  <!-- MODAL DE EDIÇÃO -->
-<div id="modal-editar" class="modal">
+  <!-- ========================================== -->
+  <!-- MODAL: EDITAR PRODUTO                      -->
+  <!-- ========================================== -->
+  <div id="modal-editar" class="modal">
     <form action="/api/produtosEditar" method="POST" class="modal-conteudo">
         <h3>Editar Produto</h3>
         
-        <!-- Campo oculto importantíssimo para enviar o ID do produto -->
+        <!-- Campos ocultos fundamentais para enviar o ID e o código atual do produto para a API -->
         <input type="hidden" name="id" id="edit-id">
         <input type="hidden" name="codigo" id="edit-codigo">
 
@@ -131,17 +154,23 @@
         <button type="submit" class="btn-atualizar">Atualizar</button>
         <button type="button" onclick="fecharModal('modal-editar')">Cancelar</button>
     </form>
-</div>
+  </div>
 
+  <!-- ========================================== -->
+  <!-- SCRIPTS JAVASCRIPT DE INTERATIVIDADE       -->
+  <!-- ========================================== -->
   <script>
+    // Função para abrir qualquer modal alterando o display para 'flex'
     function abrirModal(id) {
       document.getElementById(id).style.display = 'flex';
     }
 
+    // Função para fechar qualquer modal alterando o display para 'none'
     function fecharModal(id) {
       document.getElementById(id).style.display = 'none';
     }
 
+    // Preenche os campos do modal de edição com os dados do produto selecionado e abre-o
     function abrirModalEditar(id, codigo, nome, categoria, quantidade, foto) {
       document.getElementById('edit-id').value = id;
       document.getElementById('edit-codigo').value = codigo;
@@ -152,7 +181,7 @@
       abrirModal('modal-editar');
     }
 
-    // Filtro da Barra de Pesquisa
+    // Filtro dinâmico da barra de pesquisa em tempo real
     document.addEventListener('DOMContentLoaded', function() {
       const inputBusca = document.querySelector('.input-busca');
       const tabela = document.querySelector('table tbody');
@@ -164,6 +193,7 @@
 
           linhas.forEach(linha => {
             const textoLinha = linha.textContent.toLowerCase();
+            // Mostra ou oculta as linhas da tabela consoante o termo pesquisado
             if (textoLinha.includes(termo)) {
               linha.style.display = '';
             } else {

@@ -1,3 +1,6 @@
+/* ========================================== */
+/* RESET GLOBAL E CONFIGURAÇÕES DE TIPOGRAFIA  */
+/* ========================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -13,8 +16,11 @@ body {
   height: 100vh;
 }
 
+/* ========================================== */
+/* CABEÇALHO SUPERIOR (TOPBAR)                 */
+/* ========================================== */
 .topbar {
-  background: #eb8006;
+  background: #eb8006; /* Laranja institucional do SENAI */
   height: 70px;
   display: flex;
   align-items: center;
@@ -32,8 +38,9 @@ body {
   font-size: 20px;
 }
 
+/* Botão de terminar sessão (Sair) no topo */
 .btn-logout-top {
-  background-color: #051f3a;
+  background-color: #051f3a; /* Azul escuro padrão */
   color: #ffffff;
   text-decoration: none;
   font-size: 15px;
@@ -41,7 +48,9 @@ body {
   border-radius: 4px;
 }
 
-
+/* ========================================== */
+/* LAYOUT PRINCIPAL (SIDEBAR E CONTEÚDO)       */
+/* ========================================== */
 .main-container {
   display: flex;
   flex: 1;
@@ -66,7 +75,7 @@ body {
 
 .nav-btn:hover,
 .nav-btn.active {
-  background-color: #0d3a63;
+  background-color: #0d3a63; /* Tom de azul mais claro para o efeito hover/ativo */
 }
 
 .content {
@@ -81,8 +90,11 @@ body {
   margin-bottom: 20px;
 }
 
+/* ========================================== */
+/* CARTÃO DA TABELA E CABEÇALHO DE AÇÕES     */
+/* ========================================== */
 .card-tabela {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* Cinza claro suave para o fundo da tabela */
   padding: 20px;
   border-radius: 8px;
   width: 100%;
@@ -109,6 +121,7 @@ body {
   font-size: 14px;
 }
 
+/* Botão flutuante de adição (+) no topo da tabela */
 .btn-add {
   background-color: #051f3a;
   color: #ffffff;
@@ -120,6 +133,9 @@ body {
   cursor: pointer;
 }
 
+/* ========================================== */
+/* ESTILIZAÇÃO DA TABELA DE PRODUTOS          */
+/* ========================================== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -146,6 +162,9 @@ th {
   border: 1px solid #051f3a;
 }
 
+/* ========================================== */
+/* BOTÕES DE AÇÃO (ATUALIZAR, EDITAR, SALVAR)  */
+/* ========================================== */
 .btn-atualizar {
   background-color: #051e3e;
   color: #ffffff;
@@ -175,7 +194,6 @@ th {
   background-color: #031329;
 }
 
-
 .btn-salvar {
   background-color: #051e3e;
   color: #ffffff;
@@ -191,15 +209,17 @@ th {
   background-color: #031329;
 }
 
-/* MODAL FLUTUANTE */
+/* ========================================== */
+/* MODAIS FLUTUANTES (ADICIONAR / EDITAR)     */
+/* ========================================== */
 .modal {
-  display: none;
+  display: none; /* Oculto por padrão até ser acionado via JavaScript */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro semi-transparente */
   justify-content: center;
   align-items: center;
 }
@@ -242,4 +262,3 @@ th {
   box-sizing: border-box;
   margin-bottom: 10px;
 }
-
