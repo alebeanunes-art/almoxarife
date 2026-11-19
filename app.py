@@ -15,6 +15,14 @@ def banco_conexao():
         database='almoxarife'
     )
 
+# Funções auxiliares para hash e verificação de senha
+def gerar_hash(senha):
+    return bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def verificar_senha(senha, senha_hash):
+    return bcrypt.checkpw(senha.encode('utf-8'), senha_hash.encode('utf-8'))
+
+
 # ==========================================
 # ROTAS DE PÁGINAS (HTML)
 # ==========================================
@@ -32,7 +40,7 @@ def login_page():
         cursor.close()
         conn.close()
 
-        if usuario and bcrypt.checkpw(password.encode('utf-8'), usuario['password_hash'].encode('utf-8')):
+        if usuario and verificar_senha(password, usuario['password_hash']):
             session['usuario_id'] = usuario['id']
             session['username'] = usuario['username']
             session['role'] = usuario['role']
@@ -111,11 +119,35 @@ def movimentacoes_page():
     conn.close()
     return render_template('movimentacoes.html', produtos=produtos, movimentacoes=movimentacoes)
 
-@app.route('/add-usuario')
+@app.route('/add-usuario', methods=['GET', 'POST'])
 def add_usuario_page():
     if session.get('role') != 'admin':
         return redirect(url_for('home_page'))
-    return render_template('add-usuario.html')
+    
+    mensagem = None
+    erro = None
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        role = request.form.get('role', 'usuario')
+
+        try:
+            hashed_password = gerar_hash(password)
+            conn = banco_conexao()
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO usuarios (username, password_hash, role) VALUES (%s, %s, %s)",
+                (username, hashed_password, role)
+            )
+            conn.commit()
+            cursor.close()
+            conn.close()
+            mensagem = "Usuário cadastrado com sucesso!"
+        except mysql.connector.Error:
+            erro = "Nome de usuário já existe ou erro na base de dados."
+
+    return render_template('add-usuario.html', mensagem=mensagem, erro=erro)
 
 
 # ==========================================
@@ -134,7 +166,7 @@ def api_login():
     cursor.close()
     conn.close()
 
-    if usuario and bcrypt.checkpw(password.encode('utf-8'), usuario['password_hash'].encode('utf-8')):
+    if usuario and verificar_senha(password, usuario['password_hash']):
         session['usuario_id'] = usuario['id']
         session['username'] = usuario['username']
         session['role'] = usuario['role']
@@ -163,7 +195,6 @@ def api_listar_produtos():
 
 @app.route('/api/produtos', methods=['POST'])
 def api_cadastrar_produto():
-    # Verifica se a requisição veio em JSON ou de um formulário HTML comum
     if request.is_json:
         dados = request.get_json()
     else:
@@ -193,7 +224,6 @@ def api_cadastrar_produto():
 
         conn.commit()
         
-        # Se for formulário HTML, redireciona de volta para a home. Se for API/JSON, retorna JSON.
         if not request.is_json:
             return redirect(url_for('home_page'))
             
@@ -207,7 +237,6 @@ def api_cadastrar_produto():
 
 @app.route('/api/produtosEditar', methods=['POST'])
 def api_editar_produto():
-    # Trata de forma segura se veio via JSON ou Formulário HTML
     if request.is_json:
         dados = request.get_json()
     else:
@@ -244,7 +273,6 @@ def api_editar_produto():
 
         conn.commit()
 
-        # Se for um formulário HTML tradicional, redireciona de volta para a home. Se for API, retorna JSON.
         if not request.is_json:
             return redirect(url_for('home_page'))
 
@@ -256,7 +284,6 @@ def api_editar_produto():
         cursor.close()
         conn.close()
 
-        
 @app.route('/api/movimentacoes', methods=['GET'])
 def api_listar_movimentacoes():
     conn = banco_conexao()
@@ -284,7 +311,7 @@ def api_cadastrar_usuario():
     password = dados.get('password')
     role = dados.get('role', 'usuario')
 
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    hashed_password = gerar_hash(password)
 
     conn = banco_conexao()
     cursor = conn.cursor()
@@ -302,19 +329,15 @@ def api_cadastrar_usuario():
         cursor.close()
         conn.close()
 
-        import bcrypt
-
 def garantir_admin_padrao():
     conn = banco_conexao()
     cursor = conn.cursor(dictionary=True)
     try:
-        # Verifica se já existe algum admin cadastrado
         cursor.execute("SELECT * FROM usuarios WHERE role = 'admin' LIMIT 1")
         admin_existente = cursor.fetchone()
 
         if not admin_existente:
-            # Se não existir nenhum admin, cria o padrão
-            senha_hash = bcrypt.hashpw('1503'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            senha_hash = gerar_hash('1503')
             cursor.execute(
                 "INSERT INTO usuarios (username, password_hash, role) VALUES (%s, %s, %s)",
                 ('alebeanunes@gmail.com', senha_hash, 'admin')
@@ -329,7 +352,6 @@ def garantir_admin_padrao():
         cursor.close()
         conn.close()
 
-# Chame a função logo após inicializar o app para rodar sempre que o servidor subir
 with app.app_context():
     garantir_admin_padrao()
 
